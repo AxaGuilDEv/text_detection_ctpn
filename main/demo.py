@@ -1,23 +1,38 @@
 # coding=utf-8
-import os
-import shutil
-import sys
-import time
+#import os
+#import shutil
+#import sys
+#import time
 
-import cv2
-import numpy as np
-import tensorflow as tf
+#import cv2
+#import numpy as np
+#import tensorflow as tf
 
-sys.path.append(os.getcwd())
-from nets import model_train as model
-from utils.rpn_msr.proposal_layer import proposal_layer
-from utils.text_connector.detectors import TextDetector
+#print(sys.path)
+#print(os.getcwd())
 
-tf.app.flags.DEFINE_string('test_data_path', 'data/demo/', '')
-tf.app.flags.DEFINE_string('output_path', 'data/res/', '')
-tf.app.flags.DEFINE_string('gpu', '0', '')
-tf.app.flags.DEFINE_string('checkpoint_path', 'checkpoints_mlt/', '')
-FLAGS = tf.app.flags.FLAGS
+#sys.path.append(os.getcwd())
+#print(sys.path)
+
+#from nets import model_train as model
+#from utils.rpn_msr.proposal_layer import proposal_layer
+#from utils.text_connector.detectors import TextDetector
+
+#tf.app.flags.DEFINE_string('test_data_path', 'data/demo/', '')
+#tf.app.flags.DEFINE_string('output_path', 'data/res/', '')
+#tf.app.flags.DEFINE_string('gpu', '0', '')
+#tf.app.flags.DEFINE_string('checkpoint_path', 'checkpoints_mlt/', '')
+
+#tf.app.flags.DEFINE_string('test_data_path', '/home/ubuntu/efs-mount-point-justifiard/permis_de_conduire/notebook/text_detection_ctpn/data/demo/', '')
+#tf.app.flags.DEFINE_string('output_path', '/home/ubuntu/efs-mount-point-justifiard/permis_de_conduire/notebook/text_detection_ctpn/data/res/', '')
+#tf.app.flags.DEFINE_string('gpu', '0', '')
+#tf.app.flags.DEFINE_string('checkpoint_path', '/home/ubuntu/efs-mount-point-justifiard/permis_de_conduire/notebook/text_detection_ctpn/checkpoints_mlt/', '')
+
+# flags handle problem
+#remaining_args = FLAGS([sys.argv[0]] + [flag for flag in sys.argv if flag.startswith("--")])
+# assert(remaining_args == [sys.argv[0]])
+
+#FLAGS = tf.app.flags.FLAGS
 
 
 def get_images():
@@ -102,20 +117,8 @@ def main(argv=None):
 
                 cost_time = (time.time() - start)
                 print("cost time: {:.2f}s".format(cost_time))
-
-                for i, box in enumerate(boxes):
-                    cv2.polylines(img, [box[:8].astype(np.int32).reshape((-1, 1, 2))], True, color=(0, 255, 0),
-                                  thickness=2)
-                img = cv2.resize(img, None, None, fx=1.0 / rh, fy=1.0 / rw, interpolation=cv2.INTER_LINEAR)
-                cv2.imwrite(os.path.join(FLAGS.output_path, os.path.basename(im_fn)), img[:, :, ::-1])
-
-                with open(os.path.join(FLAGS.output_path, os.path.splitext(os.path.basename(im_fn))[0]) + ".txt",
-                          "w") as f:
-                    for i, box in enumerate(boxes):
-                        line = ",".join(str(box[k]) for k in range(8))
-                        line += "," + str(scores[i]) + "\r\n"
-                        f.writelines(line)
-
+                # print(boxes)
+                return boxes, rh, rw
 
 if __name__ == '__main__':
     tf.app.run()
